@@ -9,7 +9,7 @@ class CafeSpec extends WordSpec with MustMatchers {
 
     "preparing water" should {
 
-      "boil water to 40 degrees" in {
+      "boil water to 40 degrees as default" in {
         val water = Water(temperature = 0)
         val boiled = Cafe.boil(water)
         boiled.temperature mustEqual 40D
