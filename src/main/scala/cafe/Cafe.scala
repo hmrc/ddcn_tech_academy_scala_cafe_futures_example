@@ -4,6 +4,6 @@ object Cafe {
 
   case class Water(temperature : Double)
 
-  def boil(water: Water) = water.copy(40D)
+  def boil(water: Water, temperature : Double = 40D) = water.copy(temperature)
 
 }
