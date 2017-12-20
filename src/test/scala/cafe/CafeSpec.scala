@@ -1,12 +1,13 @@
 package cafe
 
+import cafe.Cafe.Water
 import org.scalatest.{MustMatchers, WordSpec}
 
 class CafeSpec extends WordSpec with MustMatchers {
 
   "Cafe" when {
 
-    "boiling water" should {
+    "preparing water" should {
 
       "boil water to 40 degrees" in {
         val temperature = 40D
