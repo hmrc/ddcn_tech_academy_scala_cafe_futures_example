@@ -50,7 +50,7 @@ class CafeSpec extends WordSpec with MustMatchers {
           Cafe.frothMilk(semi)
         }
       }
-      
+
     }
 
   }

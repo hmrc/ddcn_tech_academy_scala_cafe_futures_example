@@ -32,6 +32,8 @@ object Cafe {
   case class FrothedMilk(`type`: String)
 
   def frothMilk(milk: Milk) : FrothedMilk = {
+    require(!milk.equals(SemiSkimmedMilk))
+
     FrothedMilk(milk.`type`)
   }
 
