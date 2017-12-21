@@ -27,7 +27,7 @@ class CafeSpec extends WordSpec with MustMatchers {
     "preparing coffee beans" should {
 
       "return GroundCoffee when provided CoffeeBeans" in {
-        val beans = ArrabicaBeans()
+        val beans = ArrabicaBeans
         val ground = Cafe.grind(beans)
         ground mustBe a[GroundCoffee]
         ground.brand mustBe "Arrabica"

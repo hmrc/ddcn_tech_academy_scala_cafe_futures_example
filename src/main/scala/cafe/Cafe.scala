@@ -4,13 +4,13 @@ object Cafe {
 
   case class Water(temperature : Double)
 
-  def heat(water: Water, temperature : Double = 40D) = water.copy(temperature)
+  def heat(water: Water, temperature : Double = 40D) : Water = water.copy(temperature)
 
 
   sealed trait CoffeeBeans {
     val brand : String
   }
-  case class ArrabicaBeans() extends CoffeeBeans {
+  case object ArrabicaBeans extends CoffeeBeans {
     override val brand: String = "Arrabica"
   }
 
