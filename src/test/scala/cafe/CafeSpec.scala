@@ -1,6 +1,6 @@
 package cafe
 
-import cafe.Cafe.Water
+import cafe.Cafe.{ArrabicaBeans, GroundCoffee, Water}
 import org.scalatest.{MustMatchers, WordSpec}
 
 class CafeSpec extends WordSpec with MustMatchers {
@@ -27,10 +27,10 @@ class CafeSpec extends WordSpec with MustMatchers {
     "preparing coffee beans" should {
 
       "return GroundCoffee when provided CoffeeBeans" in {
-        val beans = CoffeBeans("arrabica")
+        val beans = ArrabicaBeans()
         val ground = Cafe.grind(beans)
-        ground should be a[GroundCoffee]
-        ground.brand shouldBe "arrabica"
+        ground mustBe a[GroundCoffee]
+        ground.brand mustBe "Arrabica"
       }
 
     }
