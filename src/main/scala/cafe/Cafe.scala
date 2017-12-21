@@ -2,7 +2,7 @@ package cafe
 
 object Cafe {
 
-  case class Water(temperature : Double)
+  case class Water(temperature : Double = 0D)
 
   def heat(water: Water, temperature : Double = 40D) : Water = water.copy(temperature)
 
@@ -14,6 +14,7 @@ object Cafe {
     override val brand: String = "Arrabica"
   }
 
+  case class Coffee(temperature : Double, beans : String)
   case class GroundCoffee(brand : String)
 
   def grind(beans: CoffeeBeans) : GroundCoffee = GroundCoffee(brand = beans.brand)
@@ -35,6 +36,16 @@ object Cafe {
     require(!milk.equals(SemiSkimmedMilk))
 
     FrothedMilk(milk.`type`)
+  }
+
+  case class BrewingException() extends Exception("Water is too cold")
+
+  def brew(water: Water, coffee: GroundCoffee) : Coffee = {
+    if (water.temperature < 40D) {
+      throw BrewingException()
+    } else {
+      Coffee(water.temperature, coffee.brand)
+    }
   }
 
 }
