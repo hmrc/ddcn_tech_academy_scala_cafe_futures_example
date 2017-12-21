@@ -44,6 +44,13 @@ class CafeSpec extends WordSpec with MustMatchers {
         frothed.`type` mustBe "Whole"
       }
 
+      "not froth semi skimmed milk" in {
+        intercept[IllegalArgumentException] {
+          val semi = SemiSkimmedMilk
+          Cafe.frothMilk(semi)
+        }
+      }
+      
     }
 
   }
