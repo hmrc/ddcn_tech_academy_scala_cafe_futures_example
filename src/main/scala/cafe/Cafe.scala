@@ -18,4 +18,17 @@ object Cafe {
 
   def grind(beans: CoffeeBeans) : GroundCoffee = GroundCoffee(brand = beans.brand)
 
+
+  sealed trait Milk {
+    val `type` : String
+  }
+  case object WholeMilk extends Milk {
+    override val `type` : String = "Whole"
+  }
+  case class FrothedMilk(`type`: String)
+
+  def frothMilk(milk: Milk) : FrothedMilk = {
+    FrothedMilk(milk.`type`)
+  }
+
 }
