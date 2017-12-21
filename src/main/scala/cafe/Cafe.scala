@@ -14,7 +14,15 @@ object Cafe {
     override val brand: String = "Arrabica"
   }
 
-  case class Coffee(temperature : Double, beans : String)
+  case class Coffee(temperature : Double, ground : GroundCoffee, private val milk: Option[Milk] = None) {
+
+    def addMilk(frothedMilk: FrothedMilk) = Coffee(temperature - 5D, ground, Some(frothedMilk))
+
+    def hasMilk : Boolean = milk.isDefined
+
+  }
+
+
   case class GroundCoffee(brand : String)
 
   def grind(beans: CoffeeBeans) : GroundCoffee = GroundCoffee(brand = beans.brand)
@@ -30,7 +38,7 @@ object Cafe {
     override val `type` : String = "SemiSkimmed"
   }
 
-  case class FrothedMilk(`type`: String)
+  case class FrothedMilk(`type`: String) extends Milk
 
   def frothMilk(milk: Milk) : FrothedMilk = {
     require(!milk.equals(SemiSkimmedMilk))
@@ -44,7 +52,7 @@ object Cafe {
     if (water.temperature < 40D) {
       throw BrewingException()
     } else {
-      Coffee(water.temperature, coffee.brand)
+      Coffee(water.temperature, coffee)
     }
   }
 

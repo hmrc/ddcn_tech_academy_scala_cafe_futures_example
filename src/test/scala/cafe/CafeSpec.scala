@@ -60,7 +60,7 @@ class CafeSpec extends WordSpec with MustMatchers {
         val groundCoffe = GroundCoffee("Arrabica")
         val brew = Cafe.brew(heatedWater, groundCoffe)
         brew.temperature mustBe 40D
-        brew.beans mustBe "Arrabica"
+        brew.ground.brand mustBe "Arrabica"
       }
 
       "throw BrewingException when the temperature is less than 40D" in {
