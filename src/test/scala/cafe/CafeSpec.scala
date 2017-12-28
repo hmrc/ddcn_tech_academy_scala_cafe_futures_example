@@ -1,6 +1,7 @@
 package cafe
 
 import cafe.Cafe._
+import cafe.models._
 import org.scalatest.{MustMatchers, WordSpec}
 
 class CafeSpec extends WordSpec with MustMatchers {
@@ -27,10 +28,10 @@ class CafeSpec extends WordSpec with MustMatchers {
     "preparing coffee beans" should {
 
       "return GroundCoffee when provided CoffeeBeans" in {
-        val beans = ArrabicaBeans
+        val beans = ArabicaBeans
         val ground = Cafe.grind(beans)
         ground mustBe a[GroundCoffee]
-        ground.brand mustBe "Arrabica"
+        ground.brand mustBe "Arabica"
       }
 
     }
@@ -57,15 +58,15 @@ class CafeSpec extends WordSpec with MustMatchers {
 
       "brew the coffee" in {
         val heatedWater = Water(temperature = 40D)
-        val groundCoffe = GroundCoffee("Arrabica")
+        val groundCoffe = GroundCoffee("Arabica")
         val brew = Cafe.brew(heatedWater, groundCoffe)
         brew.temperature mustBe 40D
-        brew.ground.brand mustBe "Arrabica"
+        brew.ground.brand mustBe "Arabica"
       }
 
       "throw BrewingException when the temperature is less than 40D" in {
         val heatedWater = Water(temperature = 39D)
-        val groundCoffee = GroundCoffee("Arrabica")
+        val groundCoffee = GroundCoffee("Arabica")
 
         val e = intercept[BrewingException] {
           Cafe.brew(heatedWater, groundCoffee)
