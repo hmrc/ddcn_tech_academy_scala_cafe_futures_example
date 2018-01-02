@@ -1,9 +1,12 @@
 package cafe
 
 import cafe.Cafe._
-import org.scalatest.{MustMatchers, WordSpec}
+import cafe.models._
+import org.scalatest.{AsyncWordSpec, MustMatchers}
 
-class CafeSpec extends WordSpec with MustMatchers {
+import scala.concurrent.Future
+
+class CafeSpec extends AsyncWordSpec with MustMatchers {
 
   "Cafe" when {
 
@@ -12,14 +15,14 @@ class CafeSpec extends WordSpec with MustMatchers {
       "boil water to 40 degrees as default" in {
         val water = Water(temperature = 0)
         val boiled = Cafe.heat(water)
-        boiled.temperature mustEqual 40D
+        boiled.map { water => assert(water.temperature == 40D) }
       }
 
       "boil water to 50 degrees" in {
         val temperature = 50D
         val water = Water(temperature = 0)
         val boiled = Cafe.heat(water, temperature)
-        boiled.temperature mustEqual 50D
+        boiled.map { water => assert(water.temperature == 50D) }
       }
 
     }
@@ -27,10 +30,9 @@ class CafeSpec extends WordSpec with MustMatchers {
     "preparing coffee beans" should {
 
       "return GroundCoffee when provided CoffeeBeans" in {
-        val beans = ArrabicaBeans
+        val beans = ArabicaBeans
         val ground = Cafe.grind(beans)
-        ground mustBe a[GroundCoffee]
-        ground.brand mustBe "Arrabica"
+        ground.map { g => assert(g.brand == "Arabica")}
       }
 
     }
@@ -40,15 +42,12 @@ class CafeSpec extends WordSpec with MustMatchers {
       "froth WholeMilk" in {
         val wholeMilk = WholeMilk
         val frothed = Cafe.frothMilk(wholeMilk)
-        frothed mustBe a[FrothedMilk]
-        frothed.`type` mustBe "Whole"
+        frothed.map { m => assert(m.`type` == "Whole")}
       }
 
       "not froth semi skimmed milk" in {
-        intercept[IllegalArgumentException] {
-          val semi = SemiSkimmedMilk
-          Cafe.frothMilk(semi)
-        }
+        val semi = SemiSkimmedMilk
+        recoverToSucceededIf[IllegalArgumentException] { Cafe.frothMilk(semi) }
       }
 
     }
@@ -57,20 +56,20 @@ class CafeSpec extends WordSpec with MustMatchers {
 
       "brew the coffee" in {
         val heatedWater = Water(temperature = 40D)
-        val groundCoffe = GroundCoffee("Arrabica")
-        val brew = Cafe.brew(heatedWater, groundCoffe)
-        brew.temperature mustBe 40D
-        brew.ground.brand mustBe "Arrabica"
+        val groundCoffee = GroundCoffee("Arabica")
+        val brew = Cafe.brew(heatedWater, groundCoffee)
+        brew.map { b =>
+          assert(b.temperature == 40D)
+          assert(b.ground.brand == "Arabica")
+        }
       }
 
       "throw BrewingException when the temperature is less than 40D" in {
         val heatedWater = Water(temperature = 39D)
-        val groundCoffee = GroundCoffee("Arrabica")
-
-        val e = intercept[BrewingException] {
-          Cafe.brew(heatedWater, groundCoffee)
-        }
-        e.getMessage mustBe "Water is too cold"
+        val groundCoffee = GroundCoffee("Arabica")
+        val brew = Cafe.brew(heatedWater, groundCoffee)
+        val ex: Future[BrewingException] = recoverToExceptionIf[BrewingException] { brew }
+        ex.map { e => e.getMessage mustBe "Water is too cold"  }
       }
 
     }
