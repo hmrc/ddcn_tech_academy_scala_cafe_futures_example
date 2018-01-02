@@ -2,10 +2,11 @@ package cafe
 
 import cafe.models._
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
-object Cafe {
+object Cafe extends App {
 
   def heat(water: Water, temperature : Double = 40D) : Future[Water] = Future { water.copy(temperature) }
 
@@ -24,6 +25,25 @@ object Cafe {
     } else {
      Coffee(water.temperature, coffee)
     }
+  }
+
+
+  val ground = grind(ArabicaBeans)
+  val frothed = frothMilk(WholeMilk)
+  val heated = heat(Water())
+
+  val brewedCoffee = for {
+    ground <- ground
+    frothed <- frothed
+    water <- heated
+    espresso <- brew(water, ground)
+  } yield espresso.addMilk(frothed)
+
+  brewedCoffee onComplete {
+    case Success(c) =>
+      println(s"You have brewed the following coffee $c")
+    case Failure(e) =>
+      println(s"Failed to brew a coffee ${e.getMessage}")
   }
 
 }
