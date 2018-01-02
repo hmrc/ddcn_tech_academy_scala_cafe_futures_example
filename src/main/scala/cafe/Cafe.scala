@@ -5,6 +5,7 @@ import cafe.models._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
+import scala.util.control.NonFatal
 
 object Cafe extends App {
 
@@ -27,10 +28,9 @@ object Cafe extends App {
     }
   }
 
-
   val ground = grind(ArabicaBeans)
   val frothed = frothMilk(WholeMilk)
-  val heated = heat(Water())
+  val heated = heat(Water(), temperature = 40D)
 
   val brewedCoffee = for {
     ground <- ground
@@ -42,8 +42,10 @@ object Cafe extends App {
   brewedCoffee onComplete {
     case Success(c) =>
       println(s"You have brewed the following coffee $c")
-    case Failure(e) =>
+    case Failure(e @ BrewingException()) =>
       println(s"Failed to brew a coffee ${e.getMessage}")
+    case Failure(NonFatal(e)) =>
+      println(s"Something went wrong! ${e.getMessage}")
   }
 
 }
