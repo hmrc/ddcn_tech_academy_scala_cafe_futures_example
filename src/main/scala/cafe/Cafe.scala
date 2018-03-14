@@ -1,26 +1,40 @@
 package cafe
 
+import java.util.concurrent.Executors
+
 import cafe.models._
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
+import scala.util.{Failure, Random, Success}
 
 object Cafe extends App {
 
-  def heat(water: Water, temperature : Double = 40D) : Future[Water] = Future { water.copy(temperature) }
+  implicit val ec : ExecutionContext = ExecutionContext.fromExecutor(Executors.newCachedThreadPool())
 
-  def grind(beans: CoffeeBeans) : Future[GroundCoffee] = Future { GroundCoffee(brand = beans.brand) }
+  def heat(water: Water, temperature : Double = 40D) : Future[Water] = Future {
+    Thread.sleep(Random.nextInt(2000))
+    water.copy(temperature)
+  }
+
+  def grind(beans: CoffeeBeans) : Future[GroundCoffee] = Future.apply {
+    Thread.sleep(Random.nextInt(2000))
+    println("Grinding")
+    GroundCoffee(brand = beans.brand)
+  }
 
   def frothMilk(milk: Milk) : Future[FrothedMilk] = Future {
     require(!milk.equals(SemiSkimmedMilk))
+    Thread.sleep(Random.nextInt(2000))
+    println("Frothing")
     FrothedMilk(milk.`type`)
   }
 
   case class BrewingException() extends Exception("Water is too cold")
 
   def brew(water: Water, coffee: GroundCoffee) : Future[Coffee] = Future {
+    Thread.sleep(Random.nextInt(2000))
+    println("Brewing")
     if (water.temperature < 40D) {
       throw BrewingException()
     } else {
@@ -30,14 +44,16 @@ object Cafe extends App {
 
   val ground = grind(ArabicaBeans)
   val frothed = frothMilk(WholeMilk)
-  val heated = heat(Water(), temperature = 40D)
+  val heated = heat(Water(), temperature = 60D)
 
   val brewedCoffee = for {
     ground <- ground
     frothed <- frothed
     water <- heated
     espresso <- brew(water, ground)
-  } yield espresso.addMilk(frothed)
+  } yield {
+    espresso.addMilk(frothed)
+  }
 
   brewedCoffee onComplete {
     case Success(c) =>
