@@ -1,11 +1,10 @@
 package cafe
 
+import cafe.Cafe._
 import cafe.models._
-import org.scalactic.source.Position
 import org.scalatest.{AsyncWordSpec, MustMatchers}
 
 import scala.concurrent.Future
-import scala.reflect.ClassTag
 
 class CafeSpec extends AsyncWordSpec with MustMatchers {
 
@@ -16,14 +15,14 @@ class CafeSpec extends AsyncWordSpec with MustMatchers {
       "boil water to 40 degrees as default" in {
         val water = Water(temperature = 0)
         val boiled = Cafe.heat(water)
-        boiled.map { water => assert(water.temperature == 40D) }(ec)
+        boiled.map { water => assert(water.temperature == 40D) }
       }
 
       "boil water to 50 degrees" in {
         val temperature = 50D
         val water = Water(temperature = 0)
         val boiled = Cafe.heat(water, temperature)
-        boiled.map { water => assert(water.temperature == 50D) }(ec)
+        boiled.map { water => assert(water.temperature == 50D) }
       }
 
     }
@@ -33,7 +32,7 @@ class CafeSpec extends AsyncWordSpec with MustMatchers {
       "return GroundCoffee when provided CoffeeBeans" in {
         val beans = ArabicaBeans
         val ground = Cafe.grind(beans)
-        ground.map { g => assert(g.brand == "Arabica")}(ec)
+        ground.map { g => assert(g.brand == "Arabica")}
       }
 
     }
@@ -43,12 +42,12 @@ class CafeSpec extends AsyncWordSpec with MustMatchers {
       "froth WholeMilk" in {
         val wholeMilk = WholeMilk
         val frothed = Cafe.frothMilk(wholeMilk)
-        frothed.map { m => assert(m.`type` == "Whole")}(ec)
+        frothed.map { m => assert(m.`type` == "Whole")}
       }
 
       "not froth semi skimmed milk" in {
         val semi = SemiSkimmedMilk
-        recoverToSucceededIf[IllegalArgumentException] { Cafe.frothMilk(semi) }(implicitly[ClassTag[IllegalArgumentException]], ec, implicitly[Position])
+        recoverToSucceededIf[IllegalArgumentException] { Cafe.frothMilk(semi) }
       }
 
     }
@@ -60,17 +59,17 @@ class CafeSpec extends AsyncWordSpec with MustMatchers {
         val groundCoffee = GroundCoffee("Arabica")
         val brew = Cafe.brew(heatedWater, groundCoffee)
         brew.map { b =>
-          b mustBe (b.temperature == 40D)
-          b mustBe (b.ground.brand == "Arabica")
-        }(ec)
+          assert(b.temperature == 40D)
+          assert(b.ground.brand == "Arabica")
+        }
       }
 
       "throw BrewingException when the temperature is less than 40D" in {
         val heatedWater = Water(temperature = 39D)
         val groundCoffee = GroundCoffee("Arabica")
         val brew = Cafe.brew(heatedWater, groundCoffee)
-        val ex: Future[BrewingException] = recoverToExceptionIf[BrewingException] { brew }(implicitly[ClassTag[BrewingException]], ec, implicitly[Position])
-        ex.map { e => e.getMessage mustBe "Water is too cold"  }(ec)
+        val ex: Future[BrewingException] = recoverToExceptionIf[BrewingException] { brew }
+        ex.map { e => e.getMessage mustBe "Water is too cold"  }
       }
 
     }
