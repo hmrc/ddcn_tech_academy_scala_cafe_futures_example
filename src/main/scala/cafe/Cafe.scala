@@ -8,9 +8,11 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 import scala.util.{Failure, Random, Success}
 
+case class BrewingException() extends Exception("Water is too cold")
+
 object Cafe extends App {
 
-  implicit val ec : ExecutionContext = ExecutionContext.fromExecutor(Executors.newCachedThreadPool())
+  implicit def ec : ExecutionContext = ExecutionContext.fromExecutor(Executors.newCachedThreadPool())
 
   def heat(water: Water, temperature : Double = 40D) : Future[Water] = Future {
     Thread.sleep(Random.nextInt(2000))
@@ -29,8 +31,6 @@ object Cafe extends App {
     println("Frothing")
     FrothedMilk(milk.`type`)
   }
-
-  case class BrewingException() extends Exception("Water is too cold")
 
   def brew(water: Water, coffee: GroundCoffee) : Future[Coffee] = Future {
     Thread.sleep(Random.nextInt(2000))
