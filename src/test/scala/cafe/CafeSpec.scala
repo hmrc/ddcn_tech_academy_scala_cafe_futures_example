@@ -1,12 +1,13 @@
 package cafe
 
-import cafe.Cafe._
 import cafe.models._
 import org.scalatest.{AsyncWordSpec, MustMatchers}
 
 import scala.concurrent.Future
 
 class CafeSpec extends AsyncWordSpec with MustMatchers {
+
+  implicit override def executionContext = Cafe.ec
 
   "Cafe" when {
 
